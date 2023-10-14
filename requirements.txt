@@ -1,2 +1,6 @@
 numpy
 pandas
+unet
+torch
+torch.nn
+torchvision
