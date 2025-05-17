@@ -22,6 +22,7 @@ from utils import (
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
     loop = tqdm(loader)
+    total_loss = 0
 
     for _, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
@@ -31,6 +32,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # with torch.autocast(device_type=DEVICE):
         predictions = model(data)
         loss = loss_fn(predictions, targets)
+        total_loss += loss
 
         # backward pass
         optimizer.zero_grad()
@@ -42,6 +44,8 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
+    
+    return total_loss/len(loader)
 
 def main():
     train_transformations = A.Compose(
@@ -104,16 +108,18 @@ def main():
     
     for epoch in range(NUM_EPOCHS):
         print(f"=> Epoch {epoch+1}/{NUM_EPOCHS}")
-        train_fn(train_loader, model, optimizer, LOSS_FN, scaler)
-
+        total_loss = train_fn(train_loader, model, optimizer, LOSS_FN, scaler)
+        print(f"Average loss: {total_loss:.4f}")
+        
         epoch_metrics = get_metrics(val_loader, model, device=DEVICE)
+        epoch_metrics['loss'] = total_loss
         metrics.append(epoch_metrics)
         checkpoint = {
             "state_dict": model.state_dict(),
             "optimizer": optimizer.state_dict(),
             "metrics": metrics
         }
-        save_checkpoint(checkpoint, f"{MODEL_PATH}/{MODEL_NAME}.pth.tar")
+        save_checkpoint(checkpoint, f"{MODEL_PATH}/{MODEL_NAME}_E{epoch}.pth.tar")
     
     # Need to develop the metrics plotting here.
 

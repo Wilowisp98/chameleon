@@ -16,8 +16,8 @@ OUT_CHANNELS: int = 1
 # Training Hyperparameters
 LEARNING_RATE = 1e-4
 BATCH_SIZE = 16
-NUM_EPOCHS = 2
-NUM_WORKERS = 4
+NUM_EPOCHS = 15
+NUM_WORKERS = 2
 # BCEWithLogitsLoss - "This loss combines a Sigmoid layer and the BCELoss in one single class. 
 #   This version is more numerically stable than using a plain Sigmoid followed by a BCELoss as, by combining the operations into one layer, 
 #   we take advantage of the log-sum-exp trick for numerical stability." @https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html
@@ -40,4 +40,4 @@ DATA_FOLDER: str = "data"
 DATA_DIR = os.path.join(BASE_DIR, DATA_FOLDER)
 ORIGINAL_FOLDER: str = "original"
 SKIN_MASKS_FOLDER: str = "masks"
-DATASETS = ["Dataset2_TDSD", "Dataset4_Pratheepan", "Dataset5_VDM", "Dataset6_SFA", "Dataset7_FSD"]
+DATASETS = ["Dataset2_TDSD", "Dataset4_Pratheepan", "Dataset5_VDM", "Dataset7_FSD"]
