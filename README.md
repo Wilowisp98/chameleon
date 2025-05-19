@@ -43,6 +43,7 @@ Below are some key results from training:
 ![Me & Me](other/images/combined_output.png)  
 *Me vs Me*
 
-### Future Work
+### Next Steps
 
-I still want to test this system in real-time. At the moment, I don’t have access to a webcam or a machine that allows me to use one for this purpose but it's definitely something I plan to experiment with soon.
+- Improve model resolution.
+- I still want to test this system in real-time. At the moment, I don’t have access to a webcam or a machine that allows me to use one for this purpose but it's definitely something I plan to experiment with soon.
