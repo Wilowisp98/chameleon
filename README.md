@@ -15,10 +15,10 @@ For this project, I implemented a standard U-Net architecture from scratch. You 
 
 Since I'm not very experienced building neural networks from scrath I followed a few guides and adjusted the implementation based on what made the most sense to me after testing and tuning. This version of U-Net was influenced by the following excellent resources:
 
-- [U-Net Architecture Explained (Aladdin Persson)](https://youtu.be/IHq1t7NxS8k?si=d9dofGF9n96192R8)
-- [Image Segmentation with PyTorch (Aladdin Persson)](https://youtu.be/HS3Q_90hnDg?si=6BFVv_jLfQLhuA5i)
+- [PyTorch Image Segmentation Tutorial with U-NET: everything from scratch baby - Aladdin Persson](https://youtu.be/IHq1t7NxS8k?si=d9dofGF9n96192R8)
+- [Implement and Train U-NET From Scratch for Image Segmentation - PyTorch - Uygar Kurt)](https://youtu.be/HS3Q_90hnDg?si=6BFVv_jLfQLhuA5i)
 - [Dive into Deep Learning – Batch Norm](https://d2l.ai/chapter_convolutional-modern/batch-norm.html)
-- [Convolutional Neural Networks from Scratch (Codelabs)](https://www.youtube.com/watch?v=oLvmLJkmXuc)
+- [U-NET Paper Walkthrough - Aladdin Persson](https://www.youtube.com/watch?v=oLvmLJkmXuc)
 
 Additionally, I want to acknowledge these four valuable resources for either guiding my approach or providing datasets I used for training and validation:
 
@@ -45,4 +45,4 @@ Below are some key results from training:
 
 ### Future Work
 
-I still want to test this system in real-time. At the moment, I don’t have access to a webcam or a machine that allows me to use one for this purpose, but it's definitely something I plan to experiment with soon.
+I still want to test this system in real-time. At the moment, I don’t have access to a webcam or a machine that allows me to use one for this purpose but it's definitely something I plan to experiment with soon.
