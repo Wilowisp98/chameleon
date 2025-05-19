@@ -20,7 +20,7 @@ from utils import (
     get_metrics
 )
 
-def train_fn(loader, model, optimizer, loss_fn, scaler):
+def train_fn(loader, model, optimizer, loss_fn):
     loop = tqdm(loader)
     total_loss = 0
 
@@ -29,7 +29,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
         # forward pass
-        # with torch.autocast(device_type=DEVICE):
         predictions = model(data)
         loss = loss_fn(predictions, targets)
         total_loss += loss
@@ -38,9 +37,6 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        # scaler.scale(loss).backward()
-        # scaler.step(optimizer)
-        # scaler.update()
 
         # update tqdm loop
         loop.set_postfix(loss=loss.item())
@@ -51,7 +47,6 @@ def main():
     train_transformations = A.Compose(
         [
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
-            A.Rotate(limit=35, p=1.0),
             A.HorizontalFlip(p=0.5),
             A.VerticalFlip(p=0.1),
             A.Normalize(
@@ -92,27 +87,26 @@ def main():
     print('=> Data loaded with success ✓')
 
     metrics = []
+    model_number = 0
     if LOAD_MODEL:
-        checkpoint = torch.load(f"{MODEL_PATH}/{MODEL_NAME}.pth.tar")
+        saved_models = os.listdir(MODEL_FOLDER)
+        saved_models.sort()
+        model_number += max(int(model.split('_')[2].split('.')[0].replace('E', '')) for model in saved_models)
+        model_name = f'{MODEL_NAME}_E{model_number}.pth.tar'
+        model_path = os.path.join(MODEL_FOLDER, model_name)
+        checkpoint = torch.load(model_path)
         load_model(checkpoint, model)
         if "metrics" in checkpoint:
             metrics = checkpoint["metrics"]
             print(f"Loaded {len(metrics)} previous metrics records with success ✓")
-
-    # Just printing the results before training
-    # if not LOAD_MODEL:
-    #     print('=> Getting metrics before any training data...')
-    # _ = get_metrics(val_loader, model, device=DEVICE)
-    # scaler = torch.GradScaler(DEVICE)
-    scaler = None
     
-    for epoch in range(NUM_EPOCHS):
-        print(f"=> Epoch {epoch+1}/{NUM_EPOCHS}")
-        total_loss = train_fn(train_loader, model, optimizer, LOSS_FN, scaler)
-        print(f"Average loss: {total_loss:.4f}")
+    for epoch in range(model_number + 1, NUM_EPOCHS + model_number + 1):
+        print(f"=> Epoch {epoch}/{NUM_EPOCHS + model_number}")
+        average_loss = train_fn(train_loader, model, optimizer, LOSS_FN)
+        print(f"Average loss: {average_loss:.4f}")
         
         epoch_metrics = get_metrics(val_loader, model, device=DEVICE)
-        epoch_metrics['loss'] = total_loss
+        epoch_metrics['average_loss'] = average_loss
         metrics.append(epoch_metrics)
         checkpoint = {
             "state_dict": model.state_dict(),

@@ -26,7 +26,7 @@ LOSS_FN = nn.BCEWithLogitsLoss()
 DEVICE: str = "cpu"
 
 # Model Loading/Saving
-LOAD_MODEL = False
+LOAD_MODEL = True
 BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
 MODEL_FOLDER: str = "model"
 MODEL_PATH = os.path.join(BASE_DIR, MODEL_FOLDER)
@@ -34,10 +34,19 @@ MODEL_NAME = "model_checkpoint"
 
 # Image Configuration
 # It has to be divisible by 16 because we are doing 4 down pool convolutions, which means 2^4 = 16.
-IMAGE_HEIGHT = 160
-IMAGE_WIDTH = 160
+IMAGE_HEIGHT = 128
+IMAGE_WIDTH = 128
 DATA_FOLDER: str = "data"
 DATA_DIR = os.path.join(BASE_DIR, DATA_FOLDER)
 ORIGINAL_FOLDER: str = "original"
 SKIN_MASKS_FOLDER: str = "masks"
-DATASETS = ["Dataset2_TDSD", "Dataset4_Pratheepan", "Dataset5_VDM", "Dataset7_FSD"]
+DATASETS = [
+            "Dataset1_HGR"
+            ,"Dataset2_TDSD"
+            # ,"Dataset3_Schmugge"
+            ,"Dataset4_Pratheepan"
+            ,"Dataset5_VDM"
+            # ,"Dataset6_SFA"
+            ,"Dataset7_FSD"
+            # "Dataset8_Abdomen" UNSTABLE
+            ]

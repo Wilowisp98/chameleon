@@ -7,6 +7,7 @@
 """
 
 import torch
+import os
 from dataset import load
 from torch.utils.data import DataLoader
 
@@ -80,7 +81,7 @@ def get_metrics(loader, model, device: str = "cpu"):
             X = X.to(device)
             y = y.to(device).unsqueeze(1)
             preds = torch.sigmoid(model(X))
-            preds = (preds > 0.5).float()
+            preds = (preds > 0.7).float()
 
             # Overlap metrics:
             # - Dice Coefficient
