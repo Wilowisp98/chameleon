@@ -16,7 +16,7 @@ OUT_CHANNELS: int = 1
 # Training Hyperparameters
 LEARNING_RATE = 1e-4
 BATCH_SIZE = 16
-NUM_EPOCHS = 15
+NUM_EPOCHS = 10
 NUM_WORKERS = 2
 # BCEWithLogitsLoss - "This loss combines a Sigmoid layer and the BCELoss in one single class. 
 #   This version is more numerically stable than using a plain Sigmoid followed by a BCELoss as, by combining the operations into one layer, 
@@ -34,8 +34,8 @@ MODEL_NAME = "model_checkpoint"
 
 # Image Configuration
 # It has to be divisible by 16 because we are doing 4 down pool convolutions, which means 2^4 = 16.
-IMAGE_HEIGHT = 128
-IMAGE_WIDTH = 128
+IMAGE_HEIGHT = 256
+IMAGE_WIDTH = 256
 DATA_FOLDER: str = "data"
 DATA_DIR = os.path.join(BASE_DIR, DATA_FOLDER)
 ORIGINAL_FOLDER: str = "original"

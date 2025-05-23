@@ -111,7 +111,7 @@ def analyze_model_metrics(model_name):
         if any(m[1] for m in plot_info['metrics']):
             plt.legend()
         plt.grid(True)
-        plt.savefig(os.path.join('metric_plots', filename), bbox_inches='tight')
+        plt.savefig(os.path.join('model_results', filename), bbox_inches='tight')
         plt.close()
 
     print(f"\nPlots have been saved in the 'metric_plots' directory")
