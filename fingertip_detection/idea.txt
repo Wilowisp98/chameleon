@@ -1,0 +1,14 @@
+Camera frame
+    ↓
+(A) Hand detection/localization  ──► crop ROI  
+    ↓
+(B) Fingertip estimator (classical or CNN)  
+    ↓
+Fingertip (x,y)
+    ↓
+(C) Object segmentation ──► object mask/contour
+    ↓
+Contact?  if yes → trigger skin‐color change
+
+
+probably going to implemement MediaPipe Hands: On-device Real-time Hand Tracking from scratch.
