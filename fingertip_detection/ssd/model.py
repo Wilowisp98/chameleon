@@ -31,6 +31,7 @@ class tinySSD(nn.Module):
             nn.BatchNorm2d(128), 
             nn.ReLU(inplace=True)
         )
+
         self.third_stage = nn.Sequential(  # 32 → 16
             nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1, bias=False),  # 32 -> 16
             nn.BatchNorm2d(256), 
@@ -52,11 +53,13 @@ class AnchorPrediction(nn.Module):
         self.num_anchors = num_anchors
         # 4 numbers for the bounding box | [cx, cy, w, h] or [x1, y1, x2, y2]
         # self.num_classes if it is palm or not
+        # Each anchor has to predict 4 bounding box coordinares [cx, cy, w, h] and 1 class probability, so the output is 5.
         self.pred = nn.Conv2d(self.in_channels, self.num_anchors * (4 + self.num_classes), kernel_size=3, padding=1)
 
     def forward(self, X):
         B, _, _, _ = X.shape
         out = self.pred(X)  # Output shape is [B, A*(4+C), H, W]
+        # B -> Batch size
         # Grouping predictions per spatial location
         # For each pixel at (h, w), we get A × (4 + C) values
         out = out.permute(0, 2, 3, 1).contiguous()  # [B, H, W, A*(4+C)]

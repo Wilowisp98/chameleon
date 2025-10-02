@@ -12,8 +12,7 @@ import torch.nn as nn
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        # Kernel Size = 3 because I'm going to work with RGB images, so, there are going to be 3 channels.
-        # What this means is that the matrix that represents the image is a matrix of weight * height * #channels size.
+        # Kernel Size = 3 means that we are sliding a 3x3 filter across the image.
         # --
         # Stride = 1 so it moves to the "pixel" right after.
         # --
