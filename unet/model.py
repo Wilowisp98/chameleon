@@ -64,6 +64,7 @@ class UpSample(nn.Module):
         X = torch.cat([X1, X2], dim=1)
         return self.conv(X)
 
+# I want to make this a little bit prettier in the future.
 class UNet(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()

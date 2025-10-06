@@ -13,7 +13,7 @@
 import torch
 import torch.nn as nn
 
-class tinySSD(nn.Module):
+class DownSample(nn.Module):
     def __init__(self, in_channels):
         super().__init__()
 
@@ -33,8 +33,14 @@ class tinySSD(nn.Module):
         )
 
         self.third_stage = nn.Sequential(  # 32 → 16
-            nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1, bias=False),  # 32 -> 16
+            nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(256), 
+            nn.ReLU(inplace=True)
+        )
+
+        self.fourth_stage = nn.Sequential(
+            nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(512), 
             nn.ReLU(inplace=True)
         )
 
@@ -42,7 +48,21 @@ class tinySSD(nn.Module):
         X1 = self.first_stage(X)
         X2 = self.second_stage(X1)
         X3 = self.third_stage(X2)
-        return [X1, X2, X3]
+        X4 = self.fourth_stage(X3)
+        return [X1, X2, X3, X4]
+
+class UpSample(nn.module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+
+        # The same way I was downsampling the input feature map by 2, I'm now upsampling it.
+        self.up = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
+        self.conv = nn.Conv2d(in_channels, out_channels)
+
+    def forward(self, X1, X2):
+        X1 = self.up(X1)
+        X = torch.cat([X1, X2], dim=1)
+        return self.conv(X)
 
 class AnchorPrediction(nn.Module):
     def __init__(self, in_channels, num_anchors=3, num_classes=1):
@@ -67,16 +87,29 @@ class AnchorPrediction(nn.Module):
         return out
     
 class SSDPalmDetector(nn.Module):
-    def __init__(self, anchors: list = [2, 3, 4]):
+    def __init__(self, anchors: list = [6, 2, 2, 2]):
         super().__init__()
-        self.backbone = tinySSD(in_channels=3)
+        self.down_convolutions = DownSample(in_channels=3)
+        
+        self.up_convolution_1 = UpSample(in_channels=512, out_channels=256)
+        self.up_convolution_2 = UpSample(in_channels=256, out_channels=128)
+        self.up_convolution_3 = UpSample(in_channels=128, out_channels=64)
+        
         self.heads = nn.ModuleList([
-            AnchorPrediction(64, anchors[0], 1),
+            AnchorPrediction(64, anchors[0], 1),  
             AnchorPrediction(128, anchors[1], 1),
             AnchorPrediction(256, anchors[2], 1),
+            AnchorPrediction(512, anchors[3], 1),
         ])
     
     def forward(self, x):
-        features = self.backbone(x)
-        outputs = [head(fmap) for head, fmap in zip(self.heads, features)]
+        # [X1(64ch), X2(128ch), X3(256ch), X4(512ch)]
+        [X1, X2, X3, X4] = self.down_convolutions(x)
+        
+        up3 = self.up_convolution_1(X4, X3)   # 512->256, combine with X3
+        up2 = self.up_convolution_2(up3, X2)  # 256->128, combine with X2  
+        up1 = self.up_convolution_3(up2, X1)  # 128->64, combine with X1
+        
+        pyramid_features = [up1, up2, up3, X4]
+        outputs = [head(fmap) for head, fmap in zip(self.heads, pyramid_features)]
         return torch.cat(outputs, dim=1)  # [B, N_anchors_total, 4 + C]

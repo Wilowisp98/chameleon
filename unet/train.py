@@ -49,6 +49,7 @@ def main():
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
             A.HorizontalFlip(p=0.5),
             A.VerticalFlip(p=0.1),
+            # Normalizing R G B.
             A.Normalize(
                 mean=[0.0, 0.0, 0.0],
                 std=[1.0, 1.0, 1.0],
@@ -61,6 +62,7 @@ def main():
     val_transformations = A.Compose(
         [
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
+            # Normalizing R G B.
             A.Normalize(
                 mean=[0.0, 0.0, 0.0],
                 std=[1.0, 1.0, 1.0],
